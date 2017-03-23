@@ -57,17 +57,19 @@ class ImageFrame:
     def addData(self, packetNum, listPixels):
         'adds one packet of image data'
         #70 pixels per packet
-        width = 640
-        xLoc = (packetNum*35)% width
-        yLoc = int((packetNum*35)/width)
+        xLoc = (packetNum*len(listPixels))%self.width
+        yLoc = int((packetNum*len(listPixels))/self.width)
 
         for i in range(len(listPixels)):
             xPix = xLoc + i
             yPix = yLoc
-            if (xPix) >= width:
-                xPix -= width
+            if xPix >= self.width:
+                xPix -= self.width
                 yPix += 1
-            self.data[xPix][yPix] = listPixels[i]
+            if yPix >= 480:
+                yPix = 479
+            #print("X: ", xPix, " Y: ", yPix)
+            self.data[yPix][xPix] = listPixels[i]
         if packetNum == 8777:
             imd.addImage(self)
         
@@ -86,8 +88,10 @@ class ImageData:
 if __name__ == "__main__":
     imf = ImageFrame()
     imd = ImageData()
-    #imd.addImage(imf)
-    imf.addData(8777, [[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255]])
+    print("image gen")
+    for i in range(8778):
+        imf.addData(i, [[0,255,255] for j in range(35)])
+    print("gen finished")
     implt = np.asarray(imd.getImage(0).data, dtype = np.uint8)
     plt.axis("off")
     plt.imshow(implt)
