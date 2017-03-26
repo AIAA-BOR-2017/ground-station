@@ -33,8 +33,8 @@ class SensorData:
 
     def __init__(self):
         self.data = []
-    def addFrame(self, time, batV, pres, temp, hum, gps):
-        self.data.append(SensorFrame(time, batV, pres, temp, hum, gps))
+    def addFrame(self, num, time, batV, pres, temp, hum, gps):
+        self.data.append(SensorFrame(num, time, batV, pres, temp, hum, gps))
     def graphData(self, i, j):
         '0:time,1:voltage,2:pressure,3:temperature,4:humidity'
         x = []
@@ -88,12 +88,31 @@ class ImageData:
 if __name__ == "__main__":
     imf = ImageFrame()
     imd = ImageData()
+    sd = SensorData()
+    sd.addFrame(0, 1, 1, 1, 1, 1, [0,0,0])
+    sd.addFrame(0, 2, 1, 3, 2, 2, [0,0,0])
+    sd.addFrame(0, 3, 2, 3, 4, 3, [0,0,0])
     print("image gen")
     for i in range(8778):
         imf.addData(i, [[0,255,255] for j in range(35)])
     print("gen finished")
     implt = np.asarray(imd.getImage(0).data, dtype = np.uint8)
+    plt.figure(1)
     plt.axis("off")
     plt.imshow(implt)
-    plt.show()
 
+    plt.figure(2)
+    plt.subplot(411)
+    plt1 = sd.graphData(0,1)
+    plt.plot(plt1[0],plt1[1])
+    plt.subplot(412)
+    plt2 = sd.graphData(0,2)
+    plt.plot(plt2[0], plt2[1])
+    plt.subplot(413)
+    plt3 = sd.graphData(0,3)
+    plt.plot(plt3[0], plt3[1])
+    plt.subplot(414)
+    plt4 = sd.graphData(0,4)
+    plt.plot(plt4[0], plt4[1])
+    
+    plt.show()
