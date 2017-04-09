@@ -31,6 +31,7 @@ def print_data(data):
     only argument is the data contained within the
     frame.
     """
+    '''
     packet = ['a','a','a','a','a','a','a','a','a','a','a','a']
     
     packet = pp.convertPacket(packet)
@@ -40,7 +41,8 @@ def print_data(data):
     else:
         if curimg.addData(pp.imageDataAssembler(packet)):
             imagedata.addImage(curimg)
-    
+    '''
+    print ('packet received')
     print (data)
 
 
