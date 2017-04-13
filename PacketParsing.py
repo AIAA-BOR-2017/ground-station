@@ -6,11 +6,9 @@ def isTelemetry(packet):
     if (~packet[0]&0b01000000):
         print('is telemetry')
         return True
-        #do telemetry stuff to packet here
     else:
         print('is image')
         return False
-        #do image stuff to packet here
     print(packet[0])
         
 def telemetryDataAssembler(packet, num):
