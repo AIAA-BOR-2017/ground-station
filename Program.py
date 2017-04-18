@@ -23,7 +23,32 @@ from xbee import ZigBee
 
 
 #serial_port = serial.Serial('COM3', 9600)
+#serial_port = serial.Serial('/dev/tty/usb0', 9600)
 #xbee = ZigBee(serial_port, callback='print_data')
+def img_graph(data):
+    implt = np.asarray(data.data, dtype = np.uint8)
+    plt.figure(1)
+    plt.axis("off")
+    plt.imshow(implt)
+
+def telem_graph(data):
+    plt.figure(2)
+    plt.subplot(411)
+    plt1 = data.graphData(0,1)
+    plt.ylabel('voltage')
+    plt.plot(plt1[0],plt1[1])
+    plt.subplot(412)
+    plt2 = data.graphData(0,2)
+    plt.ylabel('pressure')
+    plt.plot(plt2[0], plt2[1])
+    plt.subplot(413)
+    plt3 = data.graphData(0,3)
+    plt.ylabel('temperature')
+    plt.plot(plt3[0], plt3[1])
+    plt.subplot(414)
+    plt4 = data.graphData(0,4)
+    plt.ylabel('humidity')
+    plt.plot(plt4[0], plt4[1])
 
 def print_data(data):
     """
@@ -44,6 +69,9 @@ def print_data(data):
             imagedata.addImage(curimg)
     '''
     print ('packet received')
+    img_graph(curimg)
+    telem_graph(sensordata)
+    plt.draw()
     app.frame.packetcounter(2)
     print (data)
     
@@ -116,12 +144,15 @@ class StartPage(tk.Frame):
 if __name__ == "__main__":
     #do a thing
     #while True:
-    #    time.sleep(.01)
+    #    time.sleep(.01) #don't do this
 
     app = GroundStationGUI()
+    telem_graph(sensordata)
+    img_graph(curimg)
+    plt.show(block=False)
     app.mainloop()
 
 
 
-xbee.halt()
-serial_port.close()
+#xbee.halt()
+#serial_port.close()

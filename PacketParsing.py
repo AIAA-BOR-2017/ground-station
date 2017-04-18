@@ -9,7 +9,6 @@ def isTelemetry(packet):
     else:
         print('is image')
         return False
-    print(packet[0])
         
 def telemetryDataAssembler(packet, num):
     'converts telemetry packet to sensor frame'
