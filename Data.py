@@ -74,7 +74,7 @@ class ImageFrame:
             #print("X: ", xPix, " Y: ", yPix)
             self.data[yPix][xPix] = listPixels[i]
         if packetNum == 8777:
-            imd.addImage(self)
+            #imd.addImage(self)
             return True
         else:
             return False
