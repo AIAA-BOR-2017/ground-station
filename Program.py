@@ -22,9 +22,8 @@ from xbee import XBee
 from xbee import ZigBee
 
 
-#serial_port = serial.Serial('COM3', 9600)
+serial_port = serial.Serial('COM3', 9600)
 #serial_port = serial.Serial('/dev/tty/usb0', 9600)
-#xbee = ZigBee(serial_port, callback='print_data')
 def img_graph(data):
     implt = np.asarray(data.data, dtype = np.uint8)
     plt.figure(1)
@@ -58,26 +57,30 @@ def print_data(data):
     frame.
     """
     '''
-    packet = ['a','a','a','a','a','a','a','a','a','a','a','a']
+    packet = [chr(0x00),'a','a','a','a','a','a','a','a','a','a','a']
     
     packet = pp.convertPacket(packet)
     if pp.isTelemetry(packet):
-        telnum += 1
-        sensordata.addFrame(da.SensorFrame(pp.telemetryDataAssembler(packet, telnum)))
+        #telnum += 1
+        sensordata.addFrame(da.SensorFrame(pp.telemetryDataAssembler(packet, 0)))
     else:
-        if curimg.addData(pp.imageDataAssembler(packet)):
+        if curimg.addData(pp.imageDataAssembler(packet)): #this statement has a side-effect of adding data to the image
             imagedata.addImage(curimg)
     '''
     print ('packet received')
     img_graph(curimg)
     telem_graph(sensordata)
     plt.draw()
-    app.frame.packetcounter(2)
+    #app.frame.packetcounter(2)
     print (data)
     
 
 LARGE_FONT= ("Verdana", 12)
-
+def xbee_error(e):
+    print ("XBee error!")
+    print (e)
+ 
+xbee = ZigBee(serial_port, callback = print_data, error_callback = xbee_error, escaped=True)
 
 class GroundStationGUI(tk.Tk):
 
@@ -143,16 +146,18 @@ class StartPage(tk.Frame):
 
 if __name__ == "__main__":
     #do a thing
-    #while True:
-    #    time.sleep(.01) #don't do this
+    
 
     app = GroundStationGUI()
     telem_graph(sensordata)
     img_graph(curimg)
     plt.show(block=False)
+    print_data(0)
+    telem_graph(sensordata)
+    img_graph(curimg)
+    plt.draw()
     app.mainloop()
 
 
-
-#xbee.halt()
-#serial_port.close()
+xbee.halt()
+serial_port.close()
