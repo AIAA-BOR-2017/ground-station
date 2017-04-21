@@ -11,10 +11,8 @@ def isTelemetry(packet):
         return False
         
 def telemetryDataAssembler(packet, num):
-    print('inassemble')
     'converts telemetry packet to sensor frame'
     batV = (packet[0]<<8) + packet[1]
-    print('assembled')
     time = (packet[2]<<8) + packet[3]
     pres = (packet[4]<<4) + (packet[5]&0b11110000)
     altitude = ((packet[5]&0b00001111)<<8) + packet[6]

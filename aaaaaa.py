@@ -9,34 +9,29 @@ curimg = da.ImageFrame()
 imagedata = da.ImageData()
 
 serial_port = serial.Serial('COM3', 9600)
+packetnum = 0
 
-def print_data(data):
-    """
-    This method is called whenever data is received
-    from the associated XBee device. Its first and
-    only argument is the data contained within the
-    frame.
-    """
-    '''
-    packet = pp.convertPacket(packet)
-    if pp.isTelemetry(packet):
-        #telnum += 1
-        sensordata.addFrame(da.SensorFrame(pp.telemetryDataAssembler(packet, 0)))
-    else:
-        if curimg.addData(pp.imageDataAssembler(packet)): #this statement has a side-effect of adding data to the image
-            imagedata.addImage(curimg)
-    '''
-    print('packet received')
-    data = pp.convertPacket(data['rf_data'].decode('utf-8'))
-    print(pp.telemetryDataAssembler(data,0))
+target = open('log.csv', 'w')
+target.write("Packet Number,Time,Battery Voltage,Pressure,Temperature,Humidity,GPS")
+target.write("\n")
+print("Data Collection Started")
 
-xbee = ZigBee(serial_port, callback=print_data, escaped=True)
-
+xbee = ZigBee(serial_port, escaped=True)
 while True:
     try:
-        time.sleep(0.01)
+        data = xbee.wait_read_frame()
+        data = pp.telemetryDataAssembler(data['rf_data'],packetnum)
+        packetnum += 1
+        target.write("%d,%d,%d,%d,%d,%d,%d" % data)
+        target.write("\n")
+        #print(data)
+    
+        print("Packet Number: %d Time: %d Battery Voltage: %d Pressure: %d Temperature: %d Humidity: %d GPS: %d" % data)
+        print("Est. Points: %d" % data[0]*1)
     except KeyboardInterrupt:
         break
 
-xbee.halt()
+target.close()
+#xbee.halt()
 serial_port.close()
+
