@@ -12,15 +12,18 @@ def isTelemetry(packet):
         
 def telemetryDataAssembler(packet, num):
     'converts telemetry packet to sensor frame'
-    batV = (packet[0]<<8) + packet[1]
-    time = (packet[2]<<8) + packet[3]
-    pres = (packet[4]<<4) + (packet[5]&0b11110000)
-    altitude = ((packet[5]&0b00001111)<<8) + packet[6]
-    temp = (packet[7]<<8) + packet[8]
-    hum = (packet[9]<<8) + packet[10]
-    gps = packet[11] #this is not complete
+    batV = ((packet[1]<<8) + packet[2])*(3.7/891)
+    time = ((packet[3]<<24) + (packet[4]<<16) + (packet[5]<<8) + packet[6])/1000
+    pres = (packet[7]<<8) + packet[8]
+    temp = (packet[9]<<8) + packet[10]
+    hum = (packet[11]<<8) + packet[12]
+    lux = (packet[13]<<8) + packet[14]
+    state = packet[15]
+    alt_th = packet[16]
+    #gpslat = ((packet[16]<<8) + packet[17])/100 #this is not complete
+    #gpslon = ((packet[18]<<8) + packet[19])/100
     
-    return (num, time, batV, pres, temp, hum, gps)
+    return (num, time, batV, pres, temp, hum, lux,state, alt_th)#, 0,0) #gpslat, gpslon)
 
 def imageDataAssembler(packet):
     'converts image packet to image section tuple'
